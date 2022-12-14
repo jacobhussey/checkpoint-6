@@ -1,44 +1,63 @@
 <template>
-  <div class="home flex-grow-1 d-flex flex-column align-items-center justify-content-center">
-    <div class="home-card p-5 bg-white rounded elevation-3">
-      <img
-        src="https://bcw.blob.core.windows.net/public/img/8600856373152463"
-        alt="CodeWorks Logo"
-        class="rounded-circle"
-      >
-      <h1 class="my-5 bg-dark text-white p-3 rounded text-center">
-        Vue 3 Starter
-      </h1>
+  <section class="container-fluid">
+    <div class="row p-5 m-2 bg-img">
     </div>
-  </div>
+
+    <div class="row p-3 m-2 justify-content-between bg-light">
+      <div class="col-2">concert</div>
+      <div class="col-2">convention</div>
+      <div class="col-2">sports</div>
+      <div class="col-2">digital</div>
+    </div>
+
+    <div class="row">
+      <div v-for="e in events" class="col-2 bg-light rounded elevation-5 m-3">
+        <img :src="e.coverImg" alt="" class="img-fluid">
+        <div>
+          {{ e.name }}
+        </div>
+      </div>
+
+    </div>
+
+  </section>
 </template>
 
 <script>
+import { computed } from '@vue/reactivity'
+import { onMounted } from 'vue'
+import { AppState } from '../AppState'
+import { eventsService } from '../services/EventsService'
+
 export default {
   setup() {
-    return {}
+
+    async function getAllEvents() {
+      try {
+        await eventsService.getAllEvents()
+      } catch (error) {
+        console.error(error)
+        Pop.error(('[ERROR]'), error.message)
+      }
+    }
+    onMounted(() => {
+      getAllEvents()
+    })
+    return {
+      events: computed(() => AppState.events
+      )
+
+
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.home {
-  display: grid;
-  height: 80vh;
-  place-content: center;
-  text-align: center;
-  user-select: none;
-
-  .home-card {
-    width: 50vw;
-
-    >img {
-      height: 200px;
-      max-width: 200px;
-      width: 100%;
-      object-fit: contain;
-      object-position: center;
-    }
-  }
+.bg-img {
+  background: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8ZXZlbnR8ZW58MHx8MHx8&auto=format&fit=crop&w=600&q=60');
+  background-position: center;
+  background-size: cover;
+  height: 30vh;
 }
 </style>
