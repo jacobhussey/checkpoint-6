@@ -3,7 +3,7 @@
   <section class="container-fluid">
     <div class="row p-5 m-2 bg-img"></div>
 
-    <section class="row p-3 mx-2 my-4 justify-content-center bg-light">
+    <section class="row p-3 mx-2 my-4 justify-content-center bg-light rounded">
       <div class="col-12 bg-dark elevation-5 p-2 rounded d-flex justify-content-between">
         <button @click="filterBy = 'concert'" class="col-2 btn btn-primary fw-bold">concert</button>
         <button @click="filterBy = 'convention'" class="col-2 btn btn-primary fw-bold">convention</button>

@@ -1,5 +1,5 @@
 
-export class Event {
+export class TowerEvent {
     constructor(data) {
         this.name = data.name
         this.description = data.description

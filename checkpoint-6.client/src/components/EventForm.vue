@@ -3,7 +3,7 @@
         <h1 class="modal-title text-dark fs-5" id="exampleModalLabel">Create Event</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <form @submit.prevent="createEvent()">
+    <form @submit.prevent="createEvent">
         <div class="modal-body">
             <div class="form-floating mb-3 elevation-5 text-dark">
                 <input v-model="editable.coverImg" type="url" required class="form-control" id="imgUrl"
@@ -81,12 +81,11 @@ export default {
             async createEvent() {
                 try {
                     const event = await eventsService.createEvent(editable.value)
-
                     editable.value = {}
+                    logger.log(event)
                     Modal.getOrCreateInstance('#pictureModal').hide()
                     Pop.toast('Event Created!', 'success')
-                    // FIXME
-                    // router.push({ name: 'Event Details', params: { eventId: event.id } })
+                    router.push({ name: 'Event Details', params: { eventId: event.id } })
                 } catch (error) {
                     logger.log(error)
                     Pop.error(('[ERROR]'), error.message)
