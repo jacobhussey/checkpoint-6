@@ -34,6 +34,8 @@ class EventsService {
         const original = await dbContext.Events.findById(eventId)
         if (!original) throw new BadRequest('no event at id:' + eventId)
         if (original.isCanceled == true) throw new BadRequest('cant edit canceled event')
+        // @ts-ignore
+        if (original.creatorId.toString() != eventData.creatorId) { throw new Forbidden('not yours bro') }
         original.coverImg = eventData.coverImg ? eventData.coverImg : original.coverImg
         original.capacity = eventData.capacity !== undefined ? eventData.capacity : original.capacity
         original.description = eventData.description ? eventData.description : original.description

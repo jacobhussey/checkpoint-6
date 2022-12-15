@@ -10,9 +10,9 @@ class TicketsService {
         // @ts-ignore
         if (ticket.accountId.toString() != userId) throw new Forbidden("Bro that aint yours tickete")
 
+        await ticket.remove()
         const event = await eventsService.getOne(ticket.eventId)
         if (event.isCanceled) throw new Forbidden('event canceled')
-        await ticket.remove()
 
         // @ts-ignore
         event.capacity += 1
@@ -28,6 +28,8 @@ class TicketsService {
         const event = await dbContext.Events.findById(body.eventId)
         // @ts-ignore
         if (event.isCanceled) throw new Forbidden("event canceled")
+        // @ts-ignore
+        if (event.capacity <= 0) throw new BadRequest('event at max capacity')
         const ticket = await dbContext.Tickets.create(body)
         // @ts-ignore
         event.capacity--

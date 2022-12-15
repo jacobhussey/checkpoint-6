@@ -1,21 +1,179 @@
 <template>
+    <section class="container-fluid">
+        <div v-if="event" class="row m-3 bg-grey pb-5 rounded">
+            <div class="d-flex justify-content-end">
+                <button v-if="event.creatorId == account.id" @click="removeEvent(event.id)" class="btn btn-light mt-2">
+                    <i class="mdi mdi-delete fs-5 text-danger"></i>
+                </button>
+            </div>
+            <div class="col-5">
+                <img :src="event.coverImg" alt="" class="cover-img img-fluid">
+            </div>
+            <div class="col-6">
+                <div class="row justify-content-between">
+                    <div class="col-3">
+                        <div class="d-flex">
+                            <h1>{{ event.name }}</h1>
+                            <div v-if="event.isCanceled">
+                                <i class="mdi mdi-cancel text-danger fs-1 ms-2 p-3"></i>
+                                <!-- We're sorry, this event has been canceled. -->
+                            </div>
+                            <div v-else>
+                                <i class="mdi mdi-check text-success fs-1 ms-2 p-3"></i>
+                            </div>
 
+                        </div>
+                        <h6 class="p-1">{{ event.location }}</h6>
+                    </div>
+                    <div class="col-3">
+                        {{ event.startDate }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-10 py-3 ms-1">
+                        <p>{{ event.description }}</p>
+                    </div>
+                </div>
+                <div class="row p-5">
+                    <div class="col-12 p-5"></div>
+                </div>
+                <div class="row justify-content-between align-items-end mt-3">
+                    <div class="col-3">
+                        <h6>{{ event.capacity }} spots left</h6>
+                    </div>
+                    <div class="col-3">
+                        <button v-if="event.isCanceled" class="btn btn-outline-danger" disabled>Event is
+                            Canceled</button>
+                        <button v-else-if="account.id && !foundMe" @click="createTicket()" class="btn btn-warning">
+                            Attend
+                        </button>
+                        <button v-else-if="account.id" @click="removeTicket(foundMe.id)" class="btn btn-outline-danger">
+                            <div><i class="mdi mdi-heart-broken text-danger"></i></div>
+                            <div>Delete Ticket</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="container-fluid">
+
+            <section class="row m-3">
+                <form v-if="account.id" @submit.prevent="createComment()" action="">
+                    <div class="form-floating">
+                        <textarea v-model="editable.body" class="form-control" placeholder="Leave a comment here"
+                            id="floatingTextarea2" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2" class="text-black ms-4"></label>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success mt-3">post comment</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <section class="row">
+                <div v-for="c in comments"></div>
+                {{ comments.body }}
+            </section>
+        </section>
+
+
+    </section>
 </template>
 
 <script>
+import { onMounted, computed } from 'vue';
+import { ref } from 'vue'
+import { useRoute } from 'vue-router';
+import { AppState } from '../AppState';
+import { eventsService } from '../services/EventsService';
+import { ticketsService } from '../services/TicketsService';
+import Pop from '../utils/Pop';
+import { commentsService } from '../services/CommentsService';
+
 
 export default {
-
-
-
     setup() {
+        const editable = ref({})
+        const route = useRoute();
+        async function getEventById() {
+            try {
+                await eventsService.getEventById(route.params.eventId);
+            }
+            catch (error) {
+                console.error(error);
+                Pop.error(("[ERROR]"), error.message);
+            }
+        }
 
-        return {};
+        async function getCommentsByEventId() {
+            try {
+                await commentsService.getCommentsByEventId(route.params.eventId)
+            } catch (error) {
+                console.error(error)
+                Pop.error(('[ERROR]'), error.message)
+            }
+        }
+        onMounted(() => {
+            getEventById();
+            getCommentsByEventId()
+        });
+        return {
+            editable,
+            event: computed(() => AppState.activeEvent),
+            tickets: computed(() => AppState.tickets),
+            comments: computed(() => AppState.comments),
+            account: computed(() => AppState.account),
+            foundMe: computed(() => AppState.tickets.find(t => t.accountId == AppState.account.id)),
+            async createTicket() {
+                try {
+                    await ticketsService.createTicket({ eventId: route.params.eventId });
+                }
+                catch (error) {
+                    console.error(error);
+                    Pop.error(("[ERROR]"), error.message);
+                }
+            },
+            async removeTicket(ticketId) {
+                try {
+                    if (await Pop.confirm())
+                        await ticketsService.removeTicket(ticketId);
+                }
+                catch (error) {
+                    console.error(error);
+                    Pop.error(("[ERROR]"), error.message);
+                }
+            },
 
-    }
+            async createComment() {
+                try {
+                    editable.value.eventId = route.params.eventId
+                    await commentsService.createComment(editable.value)
+                    editable.value = {}
+                    Pop.toast('Posted comment!', 'success')
+                } catch (error) {
+                    console.error(error)
+                    Pop.error(('[ERROR]'), error.message)
+                }
+            }
+
+            // async removeEvent(eventId) {
+            //     try {
+            //         await eventsService.removeEvent(eventId)
+            //     } catch (error) {
+            //         console.error(error)
+            //         Pop.error(('[not your event to delete]'), error.message)
+            //     }
+            // }
+        };
+    },
+    components: { Comment }
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+.cover-img {
+    height: 70vh;
+    width: 70vh;
+}
 </style>
