@@ -30,14 +30,16 @@
             </div>
 
             <div class="form-floating mb-3 elevation-5 text-dark">
-                <input v-model="editable.capacity" type="numer" required class="form-control my-2" id="capacity"
+                <input v-model="editable.capacity" type="number" required class="form-control my-2" id="capacity"
                     placeholder="Event Capacity">
                 <label for="capacity">Capacity</label>
             </div>
 
             <div class="form-floating mb-3 elevation-5 text-dark">
-                <input v-model="editable.type" type="text" required class="form-control my-2" id="type"
+                <select v-model="editable.type" type="" required class="form-control my-2" id="type"
                     placeholder="Event Type">
+                    <option value="sport">Sport</option>
+                </select>
                 <label for="type">Type</label>
             </div>
 
@@ -81,6 +83,7 @@ export default {
             async createEvent() {
                 try {
                     const event = await eventsService.createEvent(editable.value)
+
                     editable.value = {}
                     logger.log(event)
                     Modal.getOrCreateInstance('#pictureModal').hide()

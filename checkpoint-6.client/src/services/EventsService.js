@@ -20,15 +20,19 @@ class EventsService {
     async createEvent(body) {
         const res = await api.post('api/events', body)
         logger.log('created event', res.data)
-        AppState.events.unshift(new TowerEvent(res.data))
+        AppState.events.push(new TowerEvent(res.data))
         return res.data
     }
 
-    // async removeEvent(id) {
-    //     const res = await api.delete('api/events/' + id)
-    //     logger.log('[DELETED EVENT]', res.data)
-    //     AppState.events.splice()
-    // }
+    async removeEvent(eventId) {
+        const res = await api.delete('api/events/' + eventId)
+        logger.log('[DELETED EVENT]', res.data)
+        // AppState.events = AppState.events.filter(e => e.id != eventId)
+        AppState.activeEvent.isCanceled = true
+        // AppState.events = AppState.events
+        AppState.activeEvent = AppState.activeEvent
+
+    }
 
 }
 

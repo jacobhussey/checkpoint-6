@@ -9,6 +9,8 @@
         <button @click="filterBy = 'convention'" class="col-2 btn btn-primary fw-bold">convention</button>
         <button @click="filterBy = 'sport'" class="col-2 btn btn-primary fw-bold">sports</button>
         <button @click="filterBy = 'digital'" class="col-2 btn btn-primary fw-bold">digital</button>
+        <button @click="filterBy = ''" class="col-2 btn btn-primary fw-bold">ALL</button>
+
       </div>
     </section>
 

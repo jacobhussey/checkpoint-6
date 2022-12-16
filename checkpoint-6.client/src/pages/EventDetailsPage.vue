@@ -44,6 +44,8 @@
                     <div class="col-3">
                         <button v-if="event.isCanceled" class="btn btn-outline-danger" disabled>Event is
                             Canceled</button>
+                        <button v-else-if="event.capacity <= 0" class="btn btn-outline-danger" disabled>Event is
+                            sold out</button>
                         <button v-else-if="account.id && !foundMe" @click="createTicket()" class="btn btn-warning">
                             Attend
                         </button>
@@ -55,6 +57,14 @@
                 </div>
             </div>
         </div>
+        <section class="row m-3">
+            <div v-for="t in tickets">
+                <div class="col-12">
+                    {{ t.profile.name }}
+                    <img :src="t.profile.picture" alt="">
+                </div>
+            </div>
+        </section>
 
         <section class="container-fluid">
 
@@ -71,9 +81,10 @@
                 </form>
             </section>
 
-            <section class="row">
-                <div v-for="c in comments"></div>
-                {{ comments.body }}
+            <section class="row mt-5">
+                <div v-for="c in comments">
+                    <Comment :comment="c" />
+                </div>
             </section>
         </section>
 
@@ -82,14 +93,17 @@
 </template>
 
 <script>
-import { onMounted, computed } from 'vue';
+import { watchEffect, computed } from 'vue';
 import { ref } from 'vue'
 import { useRoute } from 'vue-router';
 import { AppState } from '../AppState';
 import { eventsService } from '../services/EventsService';
 import { ticketsService } from '../services/TicketsService';
 import Pop from '../utils/Pop';
+import Comment from '../components/Comment.vue'
 import { commentsService } from '../services/CommentsService';
+
+
 
 
 export default {
@@ -106,6 +120,15 @@ export default {
             }
         }
 
+        async function getTicketsbyEventId() {
+            try {
+                await ticketsService.getTicketsbyEventId(route.params.eventId)
+            } catch (error) {
+                console.error(error)
+                Pop.error(('[ERROR]'), error.message)
+            }
+        }
+
         async function getCommentsByEventId() {
             try {
                 await commentsService.getCommentsByEventId(route.params.eventId)
@@ -114,9 +137,10 @@ export default {
                 Pop.error(('[ERROR]'), error.message)
             }
         }
-        onMounted(() => {
+        watchEffect(() => {
             getEventById();
-            getCommentsByEventId()
+            getCommentsByEventId();
+            getTicketsbyEventId();
         });
         return {
             editable,
@@ -153,18 +177,22 @@ export default {
                     Pop.toast('Posted comment!', 'success')
                 } catch (error) {
                     console.error(error)
-                    Pop.error(('[ERROR]'), error.message)
+                    Pop.error(('[Event is canceled.]'), error.message)
+                }
+            },
+
+
+
+
+            async removeEvent(eventId) {
+                try {
+                    if (await Pop.confirm)
+                        await eventsService.removeEvent(eventId)
+                } catch (error) {
+                    console.error(error)
+                    Pop.error(('[not your event to delete]'), error.message)
                 }
             }
-
-            // async removeEvent(eventId) {
-            //     try {
-            //         await eventsService.removeEvent(eventId)
-            //     } catch (error) {
-            //         console.error(error)
-            //         Pop.error(('[not your event to delete]'), error.message)
-            //     }
-            // }
         };
     },
     components: { Comment }
