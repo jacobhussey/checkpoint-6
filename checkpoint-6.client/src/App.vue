@@ -2,7 +2,7 @@
   <header>
     <Navbar />
   </header>
-  <main class="bg-dark">
+  <main class="" id="main">
     <router-view />
   </main>
   <footer class="bg-dark text-light">
@@ -18,8 +18,11 @@ import Navbar from './components/Navbar.vue'
 export default {
   setup() {
     return {
-      appState: computed(() => AppState)
+      appState: computed(() => AppState),
+
+
     }
+
   },
   components: { Navbar }
 }
@@ -36,5 +39,16 @@ footer {
   display: grid;
   place-content: center;
   height: 32px;
+}
+
+main {
+  padding: 25px;
+  background-color: white;
+  color: #111927;
+}
+
+.dark-mode {
+  background-color: #111927;
+  color: white;
 }
 </style>

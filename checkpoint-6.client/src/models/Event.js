@@ -6,7 +6,7 @@ export class TowerEvent {
         this.coverImg = data.coverImg
         this.location = data.location
         this.capacity = data.capacity
-        this.startDate = new Date(data.startDate).toLocaleTimeString()
+        this.startDate = new Date(data.startDate).toLocaleDateString()
         // FIXME ^
         this.isCanceled = data.isCanceled
         this.type = data.type

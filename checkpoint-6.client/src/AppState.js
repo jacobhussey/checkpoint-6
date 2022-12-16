@@ -11,5 +11,7 @@ export const AppState = reactive({
   comments: [],
   tickets: [],
   myTickets: [],
-  activeEvent: null
+  activeEvent: null,
+  darkMode: false,
+  todaysDate: {}
 })

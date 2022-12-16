@@ -9,6 +9,8 @@ class EventsService {
         const res = await api.get('api/events')
         logger.log('[Getting Events]', res.data)
         AppState.events = res.data.map(e => new TowerEvent(e))
+        AppState.todaysDate = new Date()
+        AppState.events = AppState.events.filter(e => new Date(e.startDate) >= AppState.todaysDate)
     }
     async getEventById(eventId) {
         const res = await api.get('api/events/' + eventId)

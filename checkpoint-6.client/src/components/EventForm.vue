@@ -36,11 +36,18 @@
             </div>
 
             <div class="form-floating mb-3 elevation-5 text-dark">
-                <select v-model="editable.type" type="" required class="form-control my-2" id="type"
+                <!-- <select v-model="editable.type" type="" required class="form-control my-2" id="type"
                     placeholder="Event Type">
                     <option value="sport">Sport</option>
                 </select>
-                <label for="type">Type</label>
+                <label for="type">Type</label> -->
+                <select v-model="editable.type" class="form-select" id="floatingSelect"
+                    aria-label="Floating label select example">
+                    <option selected value="convention">Convention</option>
+                    <option value="sport">Sport</option>
+                    <option value="digital">Digital</option>
+                    <option value="concert">Concert</option>
+                </select>
             </div>
 
             <div class="form-floating mb-3 elevation-5 text-dark">

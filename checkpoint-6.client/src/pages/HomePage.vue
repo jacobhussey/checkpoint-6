@@ -9,24 +9,24 @@
         <button @click="filterBy = 'convention'" class="col-2 btn btn-primary fw-bold">convention</button>
         <button @click="filterBy = 'sport'" class="col-2 btn btn-primary fw-bold">sports</button>
         <button @click="filterBy = 'digital'" class="col-2 btn btn-primary fw-bold">digital</button>
-        <button @click="filterBy = ''" class="col-2 btn btn-primary fw-bold">ALL</button>
+        <button @click="filterBy = ''" class="col-2 btn btn-primary fw-bold">all</button>
 
       </div>
     </section>
 
     <!-- SECTION EVENT FORM -->
-    <section class="row justify-content-center">
+    <!-- <section class="row justify-content-center">
       <div class="col-1">
-        <button v-if="account.id" data-bs-toggle="modal" data-bs-target="#pictureModal" class="btn btn-success">
+        <button v-if="account.id" data-bs-toggle="modal" data-bs-target="#pictureModal" class="btn btn-primary">
           Create Event
         </button>
 
       </div>
-    </section>
+    </section> -->
 
     <!-- SECTION EVENTCARD -->
     <div class="row d-flex justify-content-center">
-      <div v-for="e in events" class="col-2 bg-white rounded elevation-5 m-3">
+      <div v-for="e in events" class="col-2 bg-white rounded elevation-5 m-3 event-border select card-blur">
         <EventCard :event="e" />
       </div>
     </div>
@@ -87,5 +87,19 @@ export default {
   background-position: center;
   background-size: cover;
   height: 30vh;
+}
+
+// .event-border {
+//   border: solid 3px black;
+// }
+
+.select:hover {
+  box-shadow: 0px 0px 20px white;
+  cursor: pointer;
+}
+
+.card-blur {
+  background-color: rgb(51 27 61 / 14%);
+  backdrop-filter: blur(40px);
 }
 </style>

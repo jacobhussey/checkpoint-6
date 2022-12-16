@@ -1,29 +1,28 @@
 <template>
     <section class="container-fluid">
-        <div v-if="event" class="row m-3 bg-grey pb-5 rounded">
+        <div v-if="event" class="row m-3 bg-light pb-5 rounded">
             <div class="d-flex justify-content-end">
-                <button v-if="event.creatorId == account.id" @click="removeEvent(event.id)" class="btn btn-light mt-2">
-                    <i class="mdi mdi-delete fs-5 text-danger"></i>
-                </button>
+                <div>
+                    <div v-if="event.isCanceled" class="text-danger fw-bold">Event is canceled</div>
+                    <button v-else-if="event.creatorId == account.id" @click="removeEvent(event.id)"
+                        class="btn btn-light mt-2">
+                        <i class="mdi mdi-delete fs-5 text-danger" title="delete event"></i>
+                    </button>
+                </div>
             </div>
             <div class="col-5">
                 <img :src="event.coverImg" alt="" class="cover-img img-fluid">
             </div>
             <div class="col-6">
                 <div class="row justify-content-between">
-                    <div class="col-3">
+                    <div class="col-6">
                         <div class="d-flex">
                             <h1>{{ event.name }}</h1>
-                            <div v-if="event.isCanceled">
-                                <i class="mdi mdi-cancel text-danger fs-1 ms-2 p-3"></i>
-                                <!-- We're sorry, this event has been canceled. -->
+                            <div v-if="!event.isCanceled">
+                                <i class="mdi mdi-check text-success fs-1 ms-2 p-3" title="tickets available!"></i>
                             </div>
-                            <div v-else>
-                                <i class="mdi mdi-check text-success fs-1 ms-2 p-3"></i>
-                            </div>
-
                         </div>
-                        <h6 class="p-1">{{ event.location }}</h6>
+                        <h6 class="p-1 fst-italic">{{ event.location }}</h6>
                     </div>
                     <div class="col-3">
                         {{ event.startDate }}
@@ -34,9 +33,7 @@
                         <p>{{ event.description }}</p>
                     </div>
                 </div>
-                <div class="row p-5">
-                    <div class="col-12 p-5"></div>
-                </div>
+
                 <div class="row justify-content-between align-items-end mt-3">
                     <div class="col-3">
                         <h6>{{ event.capacity }} spots left</h6>
@@ -57,18 +54,19 @@
                 </div>
             </div>
         </div>
-        <section class="row m-3">
+        <section class="row mx-4 bg-light p-2 rounded">
+            <span class="d-flex justify-content-center align-items-center fst-italic fw-bold">Attendees:</span>
             <div v-for="t in tickets">
-                <div class="col-12">
-                    {{ t.profile.name }}
-                    <img :src="t.profile.picture" alt="">
+                <div>
+                    <img :src="t.profile.picture" alt="" class="ticket-picture rounded-circle picture-border"
+                        :title="t.profile.name">
                 </div>
             </div>
         </section>
 
-        <section class="container-fluid">
+        <section class="container-fluid mt-5">
 
-            <section class="row m-3">
+            <section class="row m-5">
                 <form v-if="account.id" @submit.prevent="createComment()" action="">
                     <div class="form-floating">
                         <textarea v-model="editable.body" class="form-control" placeholder="Leave a comment here"
@@ -204,4 +202,13 @@ export default {
     height: 70vh;
     width: 70vh;
 }
+
+.ticket-picture {
+    height: 10vh;
+    width: 10vh;
+}
+
+// .picture-border {
+//     border: solid 3px black;
+// }
 </style>
